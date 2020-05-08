@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>3D Space Warp</title>
+</head>
+<body>
+
+	<script type="text/javascript" src="JS/three.js"></script>
+	<script type="text/javascript" src="JS/OrbitControls.js"></script>
+	<script type="text/javascript">
+	var scene = new THREE.Scene();
+	var camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,1,1000);
+	var renderer = new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth,window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+
+    controls = new THREE.OrbitControls(camera,renderer.domElement);
+    // Fills the screen
+    window.addEventListener("resize",function () {
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        renderer.setSize(width,height);
+        // but the zoom is dependent on you loaded it
+
+        camera.aspect = width/height;
+        camera.updateProjectionMatrix();
+
+
+    });
+
+
+
+	camera.position.z= 3;
+	camera.rotation.x = Math.PI/2;
+
+	var starGeo =new THREE.Geometry();
+	for(var i = 0;i < 400;i++){
+		var star = new THREE.Vector3(
+				Math.random() * 600 -300
+				,Math.random() * 600 -300
+				,Math.random() * 600 -300
+			);
+		star.velocity = 0;
+	 star.acceleration =  0.002
+		starGeo.vertices.push(star);
+	}
+
+	 ;
+	var sprite =new THREE.TextureLoader().load("c.png");
+	var starMaterial = new THREE.PointsMaterial(
+			{color:0xaaaaaa,size:1,map:sprite}
+		);
+	var stars = new THREE.Points(starGeo,starMaterial);
+	scene.add(stars);
+
+
+	
+    var directionalLight = new THREE.DirectionalLight("white",100);
+    directionalLight.position.set(0,0,1);
+    directionalLight.castShadow =true;
+    scene.add(directionalLight);
+
+
+
+
+    light = new THREE.PointLight("white",10);
+    light.position.set(0,300,500);
+    scene.add(light);
+
+
+    var loader = new THREE.GLTFLoader();
+    loader.load("scene.gltf",function(gltf){
+        car = gltf.scene.children[0];
+        car.scale.set(0.5,0.5,0.5);
+
+        scene.add(gltf.scene);
+    });
+
+
+	var update = function(){
+	 starGeo.vertices.forEach(
+		   p=>{
+		   p.velocity += p.acceleration;
+		   p.y -= p.velocity;
+		   if(p.y < -200){
+			// If the stars position lies behind the screen, we will restart the position
+				p.y  = 200;	
+				p.velocity = 0;
+
+			}
+
+
+		starGeo.verticesNeedUpdate  = true;
+		stars.rotation.x += .005;
+		  }
+		  );
+
+			}
+
+	var render = function(){
+		renderer.render(scene,camera);
+
+	}
+
+	var GameLoop =function(){
+		requestAnimationFrame(GameLoop);
+		update();
+		render();
+
+	}
+	GameLoop();
+
+	</script>
+
+</body>
+</html>
