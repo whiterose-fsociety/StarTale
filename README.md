@@ -5,5 +5,6 @@ A traveller lost in space wants to make his way back home, but is met with unfam
 
 ## Credits
 The assignment is heavily influenced by the following links
-> threejs.org
-> threejsfundamentals.org
+> `threejs.org`
+
+> `threejsfundamentals.org`
