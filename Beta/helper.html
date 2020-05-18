@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StarTale: Beta</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .split {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+
+        .split > div {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="split">
+    <div id="view1" tabindex="1"></div>
+    <div id="view2" tabindex="2"></div>
+</div>
+
+
+<!--fSociety Helpers-->
+<script src="Helpers/helper.js"></script>
+<script src="Helpers/lightHelper.js"></script>
+<script src="Helpers/cameraHelper.js"></script>
+<!--fSociety Helpers-->
+
+
+<script src="../JS/three.js"></script>
+<script src="../JS/dat.gui.min.js"></script>
+<script src="../JS/OrbitControls.js"></script>
+<!--Javascript Helpers-->
+<script>
+    // Creating Split Screen
+    const view1Elem = document.querySelector("#view1");
+    const view2Elem = document.querySelector("#view2");
+
+    // Scene Functions
+    function init() {
+        document.body.appendChild(renderer.domElement);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        controls = new THREE.OrbitControls(camera, view1Elem);
+        // controls.target.set(0,5,0);
+        // controls.update();
+        window.addEventListener("resize", () => {
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            updateCamera();
+        });
+    }
+
+    function updateCamera() {
+        camera.updateProjectionMatrix();
+    }
+
+    // Debuggers and Helpers
+    let renderer, camera, scene, controls;
+    let WIDTH = window.innerWidth;
+    let HEIGHT = window.innerHeight;
+
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    camera = new THREE.PerspectiveCamera(75, WIDTH / HEIGHT, 0.1, 100);
+    camera.position.z = 5;
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color("gray");
+    init();
+
+
+    switchCameraGUI(false);
+
+
+    /**
+     * Object Creation
+     */
+    {
+        var box = new THREE.BoxGeometry(1, 1, 1);
+        var material = new THREE.MeshPhongMaterial({color: "red"});
+        var cube = new THREE.Mesh(box, material);
+        scene.add(cube);
+
+    }
+
+
+    //    Split Camera
+
+    const cameraHelper = new THREE.CameraHelper(camera);
+    scene.add(cameraHelper);
+
+
+    // Camera &  Controls
+
+    var camera2 = new THREE.PerspectiveCamera(60, 2, 0.1, 500);
+    camera2.position.set(40, 10, 30);
+    camera2.lookAt(0, 5, 0);
+
+    const controls2 = new THREE.OrbitControls(camera, view2Elem);
+    controls2.target.set(0, 5, 0);
+
+
+
+
+
+    {
+        var ambientLight = new THREE.AmbientLight(0xFFFFFF,1);
+        scene.add(ambientLight);
+
+    }
+
+
+
+
+
+
+
+
+    var update = function () {
+
+    }
+
+    var render = function () {
+        renderer.setScissorTest(true);
+
+        splitCamera(camera, false, view1Elem, 0x000000);
+        splitCamera(camera2, true, view2Elem, "lightblue");
+
+
+    }
+
+
+    //Debug Switches
+
+    function switchCameraGUI(bool) {
+        if (bool) {
+            const gui = new dat.gui.GUI();
+            gui.add(camera, 'fov', 0.1, 180).onChange(updateCamera);
+
+            const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
+            gui.add(minMaxGUIHelper, 'min', 0.1, 50, 0.1).name('near').onChange(updateCamera);
+            gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name("far").onChange(updateCamera);
+        }
+    }
+
+    function switchAmbientGUI(bool, light) {
+        if (bool) {
+            const gui = new dat.gui.GUI();
+            gui.addColor(new ColorGUIHelper(light, "color"), 'value').name("color");
+            gui.add(light, 'intensity', 0, 2, 0.01);
+        }
+    }
+
+    function switchDirectionalGUI(bool, light) {
+        if (bool) {
+            const gui = new dat.gui.GUI();
+            gui.addColor(new ColorGUIHelper(light, "color"), "value").name("color");
+            gui.add(light, 'intensity', 0, 2, 0.01);
+            makeXYZGUI(gui, light.position, 'position', updateLight);
+            makeXYZGUI(gui, light.target.position, 'target', updateLight);
+        }
+    }
+
+    function switchSpotLightGUI(bool, light) {
+        const gui = new dat.gui.GUI();
+        gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+        gui.add(light, 'intensity', 0, 2, 0.01);
+        gui.add(light, 'distance', 0, 40).onChange(updateLight);
+
+
+        gui.add(new DegRadHelper(light, 'angle'), 'value', 0, 90).onChange(updateLight);
+        gui.add(light, 'penumbra', 0, 1, 0.01);
+
+        makeXYZGUI(gui, light.position, 'position', updateLight);
+        makeXYZGUI(gui, light.target.position, 'target', updateLight);
+
+    }
+
+
+    var GameLoop = function () {
+        requestAnimationFrame(GameLoop);
+        update();
+        render();
+    }
+
+    GameLoop();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="Universe/Universe.js"></script>
+<script src="../JS/three.js"></script>
+<script src="../JS/OrbitControls.js"></script>
+<script>
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    var stars = [];
+
+    function init() {
+        renderer.setSize(width, height);
+
+        document.body.appendChild(renderer.domElement);
+
+        window.addEventListener("resize", () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    }
+    var renderer = new THREE.WebGLRenderer({antialias: true});
+    var camera = new THREE.PerspectiveCamera(60, width / height, 1, 100000);
+    camera.position.set(0,200,100);
+    init();
+
+
+    function createScene(){
+
+
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color("black");
+        scene.fog = new THREE.Fog(0xf7d9aa,100,950);
+        // addSphere(scene,stars);
+        renderer.render(scene,camera);
+    }
+
+
+
+
+    var update = function () {
+        // animateStars(stars);
+    }
+
+    var render = function () {
+        createScene();
+
+
+        // renderer.render(scene, camera);
+    }
+
+    var GameLoop = function () {
+        requestAnimationFrame(GameLoop);
+        update();
+        render();
+    }
+
+
+    GameLoop();
+
+
+</script>
+
+</body>
+</html>
