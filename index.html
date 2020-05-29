@@ -1,0 +1,286 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="CSS/defaultLayout.css">
+
+    <style>
+        /*overlay defines the style of the game menus*/
+        .overlay {
+            position: fixed; /* Sit on top of the page content */
+            display: none; /* Hidden by default */
+            width: 100%; /* Full width (cover the whole page) */
+            height: 100%; /* Full height (cover the whole page) */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: black url("IMG/cover.png") no-repeat top center;
+            background-size: cover;
+            z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+            text-align: center;
+        }
+
+        .overlay div{
+            position: absolute;
+            bottom: 10%;
+            width: 100%;
+            text-align: center;
+        }
+
+        .overlay div p{
+            font-size: 30px;
+        }
+
+        .overlay div button{
+            width: 130px;
+            height: 50px;
+            color: black;
+            background: white;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+            font-size: 20px;
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .overlay div button:hover{
+            color: white;
+            background: black;
+        }
+
+        .map{
+            height: 400px;
+            width: 200px;
+            background: blue;
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+        }
+
+        .stats{
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: rgba(17, 17, 17, 0.87);
+            font-size: 15px;
+            z-index: 1;
+        }
+
+        .stats p{
+            color: white;
+        }
+
+    </style>
+
+    <title>Space Ride</title>
+
+    <!--Add the JS file-->
+    <script src="JS/three.js"></script>
+    <script src="JS/THREEx.FullScreen.js"></script>
+    <script src="JS/Refractor.js"></script>
+    <script src="JS/WaterRefractionShader.js"></script>
+    <script src="JS/WorldBuilder.js"></script>
+    <script src="JS/Coin.js"></script>
+    <script src="JS/Car.js"></script>
+    <script src="JS/SpikeObstacle.js"></script>
+    <script src="JS/CubeObstacle.js"></script>
+    <script src="JS/SafetyOrb.js"></script>
+    <script src="JS/StageDescManager.js"></script>
+    <script src="JS/StageLogicBuilder.js"></script>
+
+
+</head>
+<body>
+
+<!--Audio players-->
+<audio id="jumpSound">
+    <source src="AUDIO/jump.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="levelComplete">
+    <source src="AUDIO/victory.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="dangerCubeDisabled">
+    <source src="AUDIO/disabled.mp3" type="audio/mpeg">
+</audio>
+
+<!--Add the main menu overlay (the background), set it to visible by default by display: block-->
+<div id="mainMenu" class="overlay" style="display: block">
+    <div>
+        <!--Add the buttons-->
+        <button onclick="off()">Start</button>
+        <button onclick="goToFullScreen()">FullScreen</button>
+        <button onclick="startAtLevel1()">Stage 1</button>
+        <button onclick="startAtLevel2()">Stage 2</button>
+        <button onclick="startAtLevel3()">Stage 3</button>
+        <button onclick="showAbout()">About</button>
+    </div>
+</div>
+
+<!--Pause Menu-->
+<div id="pauseMenu" class="overlay">
+    <div>
+        <button onclick="restartGame()">Restart</button>
+        <button onclick="resumeGame()">Resume</button>
+        <button onclick="goToFullScreen()">FullScreen</button>
+        <button onclick="startAtLevel1()">Stage 1</button>
+        <button onclick="startAtLevel2()">Stage 2</button>
+        <button onclick="startAtLevel3()">Stage 3</button>
+        <button onclick="showAbout()">About</button>
+    </div>
+</div>
+
+<!--GameOverMenu-->
+<div id="GameOverMenu" class="overlay">
+    <div>
+        <p>You Died :(</p>
+        <button onclick="restartGame()">Restart</button>
+        <button onclick="goToFullScreen()">FullScreen</button>
+        <button onclick="startAtLevel1()">Stage 1</button>
+        <button onclick="startAtLevel2()">Stage 2</button>
+        <button onclick="startAtLevel3()">Stage 3</button>
+        <button onclick="showAbout()">About</button>
+    </div>
+</div>
+
+<!--Level won menu-->
+<div id="levelWon" class="overlay">
+    <div>
+        <p>Hooray, Level Complete :)</p>
+        <button onclick="goToNextLevel()">Next Level</button>
+        <button onclick="restartGame()">Restart</button>
+        <button onclick="goToFullScreen()">FullScreen</button>
+        <button onclick="startAtLevel1()">Stage 1</button>
+        <button onclick="startAtLevel2()">Stage 2</button>
+        <button onclick="startAtLevel3()">Stage 3</button>
+        <button onclick="showAbout()">About</button>
+    </div>
+</div>
+
+<!--Game complete menu-->
+<div id="gameComplete" class="overlay">
+    <div>
+        <p>Hooray, You completed the game :)</p>
+        <button onclick="restartGame()">Restart</button>
+        <button onclick="goToFullScreen()">FullScreen</button>
+        <button onclick="startAtLevel1()">Stage 1</button>
+        <button onclick="startAtLevel2()">Stage 2</button>
+        <button onclick="startAtLevel3()">Stage 3</button>
+        <button onclick="showAbout()">About</button>
+    </div>
+</div>
+
+<!--Level won but forgot to collect the safety orb-->
+<div id="levelWonBut" class="overlay">
+    <div>
+        <p>You forgot to complete the safety orb :(</p>
+        <button onclick="restartGame()">Restart</button>
+        <button onclick="goToFullScreen()">FullScreen</button>
+        <button onclick="startAtLevel1()">Stage 1</button>
+        <button onclick="startAtLevel2()">Stage 2</button>
+        <button onclick="startAtLevel3()">Stage 3</button>
+        <button onclick="showAbout()">About</button>
+    </div>
+</div>
+
+<div id="about" class="overlay" style="color: #1abec6">
+    <div>
+        <p>Space Ride</p>
+        <p>The goal of space ride is to collect a safety orb(it's blue dark in color and has a mirror effect) in each level and complete the level<br/>
+            You can also collect all coins to show off your skills :)<br/>
+            But Don't think it's that easy, there are obstacles along the way<br/>
+            And the most troublesome of them all, is the DANGER CUBE, IT'S UNAVOIDABLE, it but we can do something about it, yey :)<br/>
+        </p>
+
+        <p>
+            Controls <br/>
+            a, &#8592; - move left<br/>
+            d, 	&#8594; - move right<br/>
+            w, space, &#8593; - jump<br/>
+            c - change camera view<br/>
+            f - set the view to fullscreen <br/>
+            move mouse over danger cube to disable it(but still dangerous even when disabled) <br/>
+        </p>
+
+        <button onclick="closeAbout()">Close</button>
+    </div>
+</div>
+
+<!--stats section-->
+<div class="stats">
+    <p id="coinsCollected">Coins Collected: 0/30</p>
+    <p id="distanceToFinish">Distance To End: 100</p>
+</div>
+
+    <script>
+        //Parent: WorldBuilder.js
+        addFPSTracker();
+
+        //Parent:WorldBuilder.js
+        setUpWorld();
+
+        //PARENT: Stage1Logic
+        buildStageLogic();
+
+        //function called every frame, used to update anything that's in the game
+        let update = function (){
+            if(!pause){
+                //PARENT: Car.js
+                moveCarIfKeyPressed();
+                if(carIsOnTheGround()) resetJumpValues();
+                animateCar();
+                updateWorld();
+                detectCollisions();
+            }
+
+        };
+
+
+        //function used to define what happens in the game and every loop
+        let GameLoop = function () {
+            //allow GameLoop to be called every single frame
+            requestAnimationFrame(GameLoop);
+            //call the update function to update objects
+            update();
+            //draw the new updates
+            render();
+        };
+
+        GameLoop();
+
+    </script>
+
+    <script>
+        document.getElementById("mainMenu").style.display = "block";
+
+        function off() {
+            document.getElementById("mainMenu").style.display = "none";
+            initBackgroundMusic();
+            setLevel1();
+            pause = false;
+        }
+
+        function resumeGame() {
+            pause = false;
+            document.getElementById("pauseMenu").style.display = "none";
+        }
+
+        function updateStats(coinsCollected, totalCoinsInScene, distanceToEnd) {
+            document.getElementById("coinsCollected").innerText = "Coins Collected: "+coinsCollected+"/"+totalCoinsInScene;
+            document.getElementById("distanceToFinish").innerText = "Distance To End: " + distanceToEnd;
+        }
+
+        function showAbout() {
+            document.getElementById("about").style.display = "block";
+        }
+
+        function closeAbout() {
+            document.getElementById("about").style.display = "none";
+        }
+
+    </script>
+</body>
+</html>
