@@ -71,25 +71,61 @@
         .stats p{
             color: white;
         }
+        #screen {
+          background-color: black;
+          width: 100%;
+          margin: 150px auto;
+          text-align: center;
+          height: 60%;
+          position: relative;
+        }
+
+        .employee {
+          margin-top: 100px;
+          list-style-type: none;
+          position: absolute;
+          bottom: 0;
+        	line-height: 1.5em;
+          text-align: center;
+          width: 100%;
+        }
+        .space{
+          margin-top: 40px;
+        }
+
+        .title {
+          font-size: 1em;
+          color: white;
+          opacity: 0;
+        }
+        .name {
+          font-size: 1.5em;
+          color: whitesmoke;
+          opacity: 0;
+        }
 
     </style>
 
     <title>Space Ride</title>
 
     <!--Add the JS file-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="JS/credits.js"></script>
     <script src="JS/three.js"></script>
     <script src="JS/THREEx.FullScreen.js"></script>
     <script src="JS/Refractor.js"></script>
     <script src="JS/WaterRefractionShader.js"></script>
+    <script src="JS/Car.js"></script>
     <script src="JS/WorldBuilder.js"></script>
     <script src="JS/Coin.js"></script>
-    <script src="JS/Car.js"></script>
     <script src="JS/SpikeObstacle.js"></script>
     <script src="JS/CubeObstacle.js"></script>
     <script src="JS/SafetyOrb.js"></script>
     <script src="JS/StageDescManager.js"></script>
     <script src="JS/StageLogicBuilder.js"></script>
 
+
+    </script>
 
 </head>
 <body>
@@ -162,6 +198,10 @@
 
 <!--Game complete menu-->
 <div id="gameComplete" class="overlay">
+    <div id="screen">
+
+    </div>
+
     <div>
         <p>Hooray, You completed the game :)</p>
         <button onclick="restartGame()">Restart</button>
@@ -258,7 +298,8 @@
 
         function off() {
             document.getElementById("mainMenu").style.display = "none";
-            initBackgroundMusic();
+            // initBackgroundMusic();
+            // Parent StageDescManager.js
             setLevel1();
             pause = false;
         }
@@ -267,6 +308,9 @@
             pause = false;
             document.getElementById("pauseMenu").style.display = "none";
         }
+
+        // Update Method
+
 
         function updateStats(coinsCollected, totalCoinsInScene, distanceToEnd) {
             document.getElementById("coinsCollected").innerText = "Coins Collected: "+coinsCollected+"/"+totalCoinsInScene;

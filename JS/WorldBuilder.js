@@ -126,8 +126,10 @@ function setUpWorld(){
 
     //build the car
     let c = buildCar(); //build car function from Car.js
-    c.scale.set(0.4, 0.4, 0.4); //position the car
-    c.position.y -= 0.2;
+    console.log(c);
+    c.scale.set(.005,.005,.005);
+    c.position.set(0,0,0);
+    c.rotation.y = -1.539;
     c.castShadow = true;//allows car to cast shadows
     scene.add(c);
 
@@ -135,7 +137,7 @@ function setUpWorld(){
     camera.lookAt(c.position);
 
     //came from https://threejs.org/docs/#api/en/lights/SpotLight
-    spotLight = new THREE.SpotLight( 0xd51717); //creates red spot light
+    spotLight = new THREE.SpotLight( "blue"); //creates red spot light
     let spotLightConfig = viewConfig[1];
 
     spotLight.position.x = spotLightConfig[0];
@@ -174,24 +176,24 @@ function buildGround(){
     scene.add(ground);
 }
 
-//initialize backgroundMusic
-function initBackgroundMusic(){
-    musicPlaying = true;
-    let listener = new THREE.AudioListener();
-    camera.add( listener );
-
-// create a global audio source
-    let sound = new THREE.Audio( listener );
-
-// load a sound and set it as the Audio object's buffer
-    let audioLoader = new THREE.AudioLoader();
-    audioLoader.load( '../AUDIO/backgroundMusic.mp3', function( buffer ) {
-        sound.setBuffer( buffer );
-        sound.setLoop( true );
-        sound.setVolume( 0.5 );
-        sound.play();
-    });
-}
+// //initialize backgroundMusic
+// function initBackgroundMusic(){
+//     musicPlaying = true;
+//     let listener = new THREE.AudioListener();
+//     camera.add( listener );
+//
+// // create a global audio source
+//     let sound = new THREE.Audio( listener );
+//
+// // load a sound and set it as the Audio object's buffer
+//     let audioLoader = new THREE.AudioLoader();
+//     audioLoader.load( '../AUDIO/backgroundMusic.mp3', function( buffer ) {
+//         sound.setBuffer( buffer );
+//         sound.setLoop( true );
+//         sound.setVolume( 0.5 );
+//         sound.play();
+//     });
+// }
 
 //draws the scene
 let render = function () {

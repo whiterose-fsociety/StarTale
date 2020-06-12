@@ -298,6 +298,8 @@ function detectCollisions() {
         if ( ( carBoxColliderBounds.xMin <= bounds.xMax && carBoxColliderBounds.xMax >= bounds.xMin ) &&
             ( carBoxColliderBounds.yMin <= bounds.yMax && carBoxColliderBounds.yMax >= bounds.yMin) &&
             ( carBoxColliderBounds.zMin <= bounds.zMax && carBoxColliderBounds.zMax >= bounds.zMin) ) {
+              console.log("The Index");
+              console.log(stageObjects[index]);
             // We hit something
             if(stageObjects[index].name === "coin"){//if we hit the coin
                 //remove it from the scene
@@ -308,13 +310,24 @@ function detectCollisions() {
                 delete stageObjects[index];
                 //update the coin count
                 totalCoinsCollected++;
+                if(totalCoinsCollected == 16){
+                  LevelWon();
+                  pause = true;
+                }
+                console.log("Stage Objects After Collecting Coin");
+                console.log(stageObjects);
             }
+
             else if (stageObjects[index].name === "wall"){//if we hit the end wall
                 //alert level complete
                 LevelWon();
                 pause = true;
+                console.log("Stage Objects Hitting Wall");
+                console.log(stageObjects);
             }
-            else if (stageObjects[index].name === "obstacle" || stageObjects[index].name === "dangerCube"){
+            else if (stageObjects[index].name === "obstacle"){
+                console.log("Stage Objects After Hitting Obstacle");
+                console.log(stageObjects);
                 carDied();
                 pause = true;
             }
