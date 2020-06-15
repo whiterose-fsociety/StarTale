@@ -82,7 +82,7 @@ function goToNextLevel(){
 //5 -> there's an end gate
 //6 -> there's a dangerCube
 //9 -> there's a safetyOrb
-let level1Speed = 0.1;
+let level1Speed = 0.38;
 let level1 = [
     [0, 0, 0],
     [2, 1, 0],
@@ -149,7 +149,7 @@ let level1 = [
 ];
 
 //desc for level2
-let level2Speed = 0.15;
+let level2Speed = 0.4;
 let level2 = [
     [0, 0, 0],
     [0, 0, 0],
@@ -216,7 +216,7 @@ let level2 = [
 ];
 
 //desc for level3
-let level3Speed = 0.2;
+let level3Speed = 0.6;
 let level3 = [
     [0, 0, 0],
     [2, 0, 0],//1 indicates there's a spike
